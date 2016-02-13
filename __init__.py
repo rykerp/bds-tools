@@ -40,7 +40,7 @@ bl_info = {
     "name": "BDS-Tools",
     "description": "Import meshes, materials etc. from DSON files",
     "author": "Ryker",
-    "version": (0, 9),
+    "version": (1, 0),
     "blender": (2, 76, 0),
     "location": "https://github.com/rykerp/bds-tools",
     "warning": "",  # used for warning icon and text in addons panel
