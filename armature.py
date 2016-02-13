@@ -1,3 +1,4 @@
+# contains code from https://github.com/millighost/dsf-utils
 from math import radians, degrees
 
 import bpy
