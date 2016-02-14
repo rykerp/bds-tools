@@ -4,6 +4,8 @@ Import DSON files into Blender
 ## Installation
 See https://www.blender.org/manual/advanced/scripting/python/add_ons.html#installation-of-a-3rd-party-add-on
 
+Please make sure that the directory inside your scripts/addons directory is named bds-tools (not bds-tools-1.0 or bds-tools-master)
+
 ## Configuration
 Set your content root directory in the add-on preferences (File -> User Preferences -> Add-ons -> BDS-Tools)
 
