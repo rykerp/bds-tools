@@ -96,7 +96,7 @@ class Channel:
     def __init__(self, json_channel):
         chan = json_channel["channel"]
         self.id = chan["id"]
-        self.type = chan["type"]
+        self.type = chan.get("type", "float")
         self.label = chan.get("label", "")
         self.value = chan.get("value", None)
         self.visible = chan.get("visible", True)
