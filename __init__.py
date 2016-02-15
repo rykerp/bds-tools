@@ -1,3 +1,5 @@
+import sys
+
 if "bpy" in locals():
     import importlib
     importlib.reload(asset_import)
@@ -34,7 +36,7 @@ from bpy.types import Operator, AddonPreferences
 from bpy.props import StringProperty, IntProperty, BoolProperty
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 bl_info = {
     "name": "BDS-Tools",
@@ -48,6 +50,33 @@ bl_info = {
     "category": "Import-Export"
 }
 
+
+def configure_logging(log_file_name):
+    std_level = logging.DEBUG
+
+    root = logging.getLogger()
+    root.setLevel(std_level)
+
+    # clear all logging handlers
+    root.handlers = []
+
+    formatter = logging.Formatter("%(asctime)s-%(levelname)s:%(name)s:%(lineno)d: %(message)s")
+
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(std_level)
+    ch.setFormatter(formatter)
+    root.addHandler(ch)
+
+    if log_file_name and len(log_file_name) > 0:
+        fh = logging.FileHandler(log_file_name)
+        fh.setFormatter(formatter)
+        root.addHandler(fh)
+
+
+def set_debug_log_file(self, context):
+    configure_logging(self.debug_file)
+
+
 class BdstAddonPreferences(AddonPreferences):
     bl_idname = __name__
 
@@ -55,12 +84,20 @@ class BdstAddonPreferences(AddonPreferences):
             name="Content Root Directory",
             default="C:\\Users\\Public\\Documents\\My DAZ 3D Library",
             subtype='DIR_PATH'
-            )
+    )
+    debug_file = StringProperty(
+        name="Debug Log File",
+        default="",
+        subtype='FILE_PATH',
+        update=set_debug_log_file
+    )
 
     def draw(self, context):
         layout = self.layout
         layout.label(text="Content Root is where your data, Runtime, Environment, People, etc. folders are located")
         layout.prop(self, "content_root")
+        layout.label(text="If set, all logging output will be written to this file")
+        layout.prop(self, "debug_file")
 
 
 def register():
@@ -73,6 +110,10 @@ def register():
     asset_import.register()
     morph_import.register()
     pose_import.register()
+
+    user_preferences = bpy.context.user_preferences
+    addon_prefs = user_preferences.addons["bds-tools"].preferences
+    configure_logging(addon_prefs.debug_file)
 
 
 def unregister():
