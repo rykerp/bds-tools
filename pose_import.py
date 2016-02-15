@@ -39,9 +39,9 @@ class PoseImporter(bpy.types.Operator):
 
 def apply_scale(bl_obj, bone_name, x, y, z):
     scale = bl_obj.pose.bones[bone_name].scale
-    a = x if x is not None else scale[0]
-    b = z if z is not None else scale[2]
-    c = y if y is not None else scale[1]
+    a = scale[0] + x if x is not None else scale[0]
+    b = scale[2] + z if z is not None else scale[2]
+    c = scale[1] + y if y is not None else scale[1]
     bl_obj.pose.bones[bone_name].scale = (a, b, c)
 
 

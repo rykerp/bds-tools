@@ -238,7 +238,7 @@ class BoneTransformation:
         self.bone_name = bone_name
         self.rotation = ["", "", ""]
         self.translation = [0, 0, 0]
-        self.scale = [1, 1, 1]
+        self.scale = [0, 0, 0]
         self.center_point = [0, 0, 0]
         self.end_point = [0, 0, 0]
         self.orientation = [0, 0, 0]
@@ -248,7 +248,7 @@ class BoneTransformation:
             "x": 0, "y": 1, "z": 2
         }
         if transform == "scale" and axis == "general":
-            self.scale = [self.scale[0] + value, self.scale[1] + value, self.scale[2] + value]
+            self.scale = [value, value, value]
         else:
             getattr(self, transform)[map[axis]] = value
 
