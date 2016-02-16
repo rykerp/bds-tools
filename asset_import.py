@@ -160,12 +160,17 @@ def load_asset(filepath):
     # setup parent relationships (so children will get affected by transforms later)
     geometry_nodes = [node for node in asset.scene.nodes if node.type in ["node", "figure"]]
     for node in geometry_nodes:
-        if node.parent and "@selection" in node.parent:
+        parent = node.parent
+        if parent and "@selection" in parent:
             continue
-        bl_parent = find_bl_object_for_geom_id(blender_objects, node.parent)
+        if node.conform_target and not node.parent:
+            # sometimes parent is not set but conform_target is
+            parent = node.conform_target
+
+        bl_parent = find_bl_object_for_geom_id(blender_objects, parent)
         if bl_parent is None:
-            bl_parent = find_bl_object_for_node_id(blender_objects, node.parent)
-        if bl_parent is None and bl_armature is not None and node.parent is not None:
+            bl_parent = find_bl_object_for_node_id(blender_objects, parent)
+        if bl_parent is None and bl_armature is not None and parent is not None:
             bl_parent = bl_armature
         if bl_parent is not None and bl_parent is not bl_armature:
             bl_obj = find_bl_object_for_node_id(blender_objects, node.id)
@@ -174,7 +179,7 @@ def load_asset(filepath):
             bl_obj.matrix_parent_inverse = bl_parent.matrix_world.inverted()
         if bl_parent is not None and bl_parent is bl_armature:
             bl_obj = find_bl_object_for_node_id(blender_objects, node.id)
-            set_bone_as_relative_parent(bl_obj, bl_armature, node.parent[1:])
+            set_bone_as_relative_parent(bl_obj, bl_armature, parent[1:])
 
     # do necessary transforms
     for node in geometry_nodes:
