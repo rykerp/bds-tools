@@ -206,9 +206,10 @@ def process_formula_outputs(bl_obj, bl_morph, outputs):
         old_mode = arm.mode
         bpy.ops.object.mode_set(mode='EDIT')
         for _, pbt in pose_bone_transformations.items():
-            log.debug("apply pose to %s rot=%s scale=%s" % (pbt.bone_name, pbt.rotation, pbt.scale))
+            log.debug("apply pose to %s rot=%s scale=%s translation=%s" % (pbt.bone_name, pbt.rotation, pbt.scale, pbt.translation))
             pose_import.apply_rotation(arm, pbt.bone_name, *pbt.rotation)
             pose_import.apply_scale(arm, pbt.bone_name, *pbt.scale)
+            pose_import.apply_translation(arm, pbt.bone_name, *pbt.translation)
         bpy.ops.object.mode_set(mode=old_mode)
         bpy.context.scene.objects.active = old_obj
 

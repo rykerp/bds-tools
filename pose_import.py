@@ -47,9 +47,9 @@ def apply_scale(bl_obj, bone_name, x, y, z):
 
 def apply_translation(bl_obj, bone_name, x, y, z):
     location = bl_obj.pose.bones[bone_name].location
-    a = x if x is not None else location[0]
-    b = -z if z is not None else location[2]
-    c = y if y is not None else location[1]
+    a = x / 100 if x is not None else location[0]
+    b = -z / 100 if z is not None else location[2]
+    c = y / 100 if y is not None else location[1]
     bl_obj.pose.bones[bone_name].location = (a, b, c)
 
 
