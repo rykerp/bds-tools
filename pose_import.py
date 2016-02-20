@@ -61,7 +61,7 @@ def apply_translation(bl_obj, bone_name, x, y, z):
     if c is None or c == "":
         c = location[1]
 
-    bl_obj.pose.bones[bone_name].location = (a/100, b/100, c/100)
+    pose_bone.location = (a/100, b/100, c/100)
 
 
 def apply_rotation(bl_obj, bone_name, x, y, z):
@@ -79,7 +79,7 @@ def apply_rotation(bl_obj, bone_name, x, y, z):
     if c is None or c == "":
         c = pose_bone.rotation_euler[2]
 
-    bl_obj.pose.bones[bone_name].rotation_euler = (radians(a), radians(b), radians(c))
+    pose_bone.rotation_euler = (radians(a), radians(b), radians(c))
 
 
 def transform_bone_orientation(edit_bone, x, y, z):
