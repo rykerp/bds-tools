@@ -314,7 +314,7 @@ def create_shapekey(bl_obj, modifier):
     base_shape_key = get_base_shape_key(bl_obj)
     log.debug("modifier %s type=%s" % (modifier.id, modifier.type))
 
-    shape_key_name = modifier.name
+    shape_key_name = modifier.id
     shape_key = bl_obj.shape_key_add(shape_key_name)
     shape_key_data = shape_key.data
     shape_key_values = shape_key_data.values()
