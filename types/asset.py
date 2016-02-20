@@ -97,7 +97,7 @@ class Asset:
         if path not in self.supporting_assets:
             log.debug("loading support asset")
             support_asset = Asset(self.root_path + path)
-            self.supporting_assets[support_asset.asset_id] = support_asset
+            self.supporting_assets[path] = support_asset
 
         # hmm, id's have to be unique within one file. merge find over all libraries?
         object = None
