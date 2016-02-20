@@ -3,12 +3,12 @@ from .util import coords_to_blender, parse_xyz_coords
 
 
 class Node:
-    def __init__(self, asset):
+    def __init__(self, asset, json_node):
         self.asset = asset
 
-        self.id = ""
-        self.name = ""
-        self.label = ""
+        self.id = json_node["id"]
+        self.name = json_node.get("name", self.id)
+        self.label = json_node.get("label", self.name)
         self.type = "node"
         self.parent = None
         self._rotation_order = "XYZ"
@@ -20,6 +20,8 @@ class Node:
         self._translation = [0, 0, 0]
         self._scale = [1, 1, 1]
         self.general_scale = 1
+
+        self.parse(json_node)
 
     @property
     def rotation_order(self):
@@ -57,9 +59,6 @@ class Node:
         return [self._scale[0], self._scale[2], self._scale[1]]
 
     def parse(self, json_node):
-        self.id = json_node.get("id", self.id)
-        self.name = json_node.get("name", self.name)
-        self.label = json_node.get("label", self.label)
         self.type = json_node.get("type", self.type)
         self.parent = json_node.get("parent", self.parent)
         self._rotation_order = json_node.get("rotation_order", self._rotation_order)

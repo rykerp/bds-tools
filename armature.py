@@ -99,7 +99,7 @@ def create_armature(bones):
     bone = bones[0]
     # assume bone.type == "figure":
     scene = bpy.context.scene
-    name = "rig-%s" % bone.id
+    name = "rig-%s" % bone.node.id
     armdat = bpy.data.armatures.new(name=name)
     armobj = bpy.data.objects.new(name=name, object_data=armdat)
     scene.objects.link(armobj)
@@ -176,7 +176,7 @@ def insert_bone (si_bone, armdat):
     """
 
     #bname = "CTRL-%s" % (si_bone.id)
-    bname = si_bone.id
+    bname = si_bone.node.id
     b_info = bone_info(bone=si_bone, bname=bname)
     b_bone = armdat.edit_bones.new(name=bname)
     orient = si_bone.orientation

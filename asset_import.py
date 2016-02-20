@@ -113,7 +113,8 @@ def load_asset(filepath):
     asset = types.Asset(filepath)
 
     blender_objects = []
-    bones = OrderedDict()
+    bones = OrderedDict()  # uses node_instance id as key
+    bone_node_ids = []     # uses node id
     armature_children = []
     for node in asset.scene.nodes:
         bl_obj = None
@@ -136,8 +137,12 @@ def load_asset(filepath):
             bones[node.id] = node
             if bl_obj is not None:
                 armature_children.append(bl_obj)
-        if node.type == "bone":
+        if node.type == "bone" and node.node.id not in bone_node_ids:
+            # don't add bone if its node id was already added to bone_node_ids as it is most
+            # likely a bone from a piece of clothing and might have a different transform which might
+            # override the transform of the parent bone
             bones[node.id] = node
+            bone_node_ids.append(node.node.id)
 
     # slow, but needed to calculate sharp edges
     bl_obj_to_ek = prepare_edges_faces_dict(blender_objects)
@@ -278,10 +283,11 @@ def create_weight_group(obj, joint, bones):
     elif joint.node_weights is not None:
         calc_weights = joint.node_weights
 
-    if name in obj.vertex_groups:
-        vg = obj.vertex_groups[name]
+    vg_name = node.node.id
+    if vg_name in obj.vertex_groups:
+        vg = obj.vertex_groups[vg_name]
         obj.vertex_groups.remove(vg)
-    vg = obj.vertex_groups.new(name=name)
+    vg = obj.vertex_groups.new(name=vg_name)
     for vw in calc_weights:
         if vw[1] >= 0.001:
             vg.add([vw[0]], vw[1], "REPLACE")
@@ -623,8 +629,9 @@ def transform_bones(bones, bl_armature):
     old_mode = bl_armature.mode
     bpy.ops.object.mode_set(mode='EDIT')
     for bone in bones:
-        log.debug("apply pose to %s %s" % (bone.id, bone._rotation))
-        pose_import.apply_rotation(bl_armature, bone.id, *bone._rotation)
+        bone_id = bone.node.id
+        log.debug("apply pose to %s %s" % (bone_id, bone._rotation))
+        pose_import.apply_rotation(bl_armature, bone_id, *bone._rotation)
     bpy.ops.object.mode_set(mode=old_mode)
     bpy.context.scene.objects.active = old_obj
     old_obj.select = True

@@ -9,8 +9,7 @@ class NodeLibrary:
 
     def parse(self, json_asset):
         for json_node in json_asset.get("node_library", []):
-            node = Node(self.asset)
-            node.parse(json_node)
+            node = Node(self.asset, json_node)
             self.nodes[node.id] = node
 
     def find(self, id):

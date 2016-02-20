@@ -1,6 +1,5 @@
 import copy
 
-from .util import parse_xyz_coords
 
 class NodeInstance:
     def __init__(self, asset, json_node):
