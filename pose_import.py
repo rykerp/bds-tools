@@ -46,48 +46,14 @@ def apply_scale(bl_obj, bone_name, x, y, z):
 
 
 def apply_translation(bl_obj, bone_name, x, y, z):
-    if bone_name not in bl_obj.data.edit_bones:
+    edit_bone, pose_bone = find_edit_and_pose_bone(bl_obj, bone_name)
+    if edit_bone is None or pose_bone is None:
         log.error("bone not found %s" % bone_name)
         return
 
-    sign = 1 if bl_obj.data.edit_bones[bone_name].bdst_sign[0] == "+" else -1
-    mode = bl_obj.data.edit_bones[bone_name].bdst_sign[1]
-    #mode = bl_obj.pose.bones[bone].rotation_mode[0]
-    a = None
-    b = "D"
-    c = "d"
+    a, b, c = transform_bone_orientation(edit_bone, x, y, z)
 
-    if bone_name in ["LipLowerMiddle", "lLipCorver", "rLipCorner"]:
-        log.debug("%s %s translation %s %s %s" %(bone_name, bl_obj.data.edit_bones[bone_name].bdst_sign, x, y, z))
-
-    if mode == "X":
-        if sign == -1:
-            z *= -1
-            x *= -1
-        a = z
-        b = x
-        c = y
-        #b_info.rotation_order = swap_rot(rot_order, {"X": "Y", "Y": "X", "Z": "Z"})
-    if mode == "Y":
-        if sign == -1:
-            #z *= -1
-            #y *= -1
-            x *= -1
-        # x y z
-        a = x
-        b = z
-        c = y
-        #b_info.rotation_order = swap_rot(rot_order, {"X": "X", "Y": "Y", "Z": "Z"})
-    if mode == "Z":
-        if sign == -1:
-            y *= -1
-            z *= -1
-        a = x
-        b = y
-        c = z
-        #b_info.rotation_order = swap_rot(rot_order, {"X": "X", "Y": "Z", "Z": "Y"})
-
-    location = bl_obj.pose.bones[bone_name].location
+    location = pose_bone.location
     if a is None or a == "":
         a = location[0]
     if b is None or b == "":
@@ -95,26 +61,33 @@ def apply_translation(bl_obj, bone_name, x, y, z):
     if c is None or c == "":
         c = location[1]
 
-    #a = x / 100 if x is not None else location[0]
-    #b = z / 100 if z is not None else location[2]
-    #c = y / 100 if y is not None else location[1]
     bl_obj.pose.bones[bone_name].location = (a/100, b/100, c/100)
 
 
 def apply_rotation(bl_obj, bone_name, x, y, z):
-    if bone_name not in bl_obj.data.edit_bones:
-        bone = find_bone_by_instance_id(bone_name, bl_obj.data.edit_bones)
-        if bone is None:
-            log.error("bone not found %s" % bone_name)
-            return
-        bone_name = bone.name
+    edit_bone, pose_bone = find_edit_and_pose_bone(bl_obj, bone_name)
+    if edit_bone is None or pose_bone is None:
+        log.error("bone not found %s" % bone_name)
+        return
 
-    sign = 1 if bl_obj.data.edit_bones[bone_name].bdst_sign[0] == "+" else -1
-    mode = bl_obj.data.edit_bones[bone_name].bdst_sign[1]
-    #mode = bl_obj.pose.bones[bone].rotation_mode[0]
+    a, b, c = transform_bone_orientation(edit_bone, x, y, z)
+
+    if a is None or a == "":
+        a = pose_bone.rotation_euler[0]
+    if b is None or b == "":
+        b = pose_bone.rotation_euler[1]
+    if c is None or c == "":
+        c = pose_bone.rotation_euler[2]
+
+    bl_obj.pose.bones[bone_name].rotation_euler = (radians(a), radians(b), radians(c))
+
+
+def transform_bone_orientation(edit_bone, x, y, z):
+    sign = 1 if edit_bone.bdst_sign[0] == "+" else -1
+    mode = edit_bone.bdst_sign[1]
     a = None
-    b = "D"
-    c = "d"
+    b = None
+    c = None
 
     if mode == "X":
         if sign == -1:
@@ -123,15 +96,12 @@ def apply_rotation(bl_obj, bone_name, x, y, z):
         a = z
         b = x
         c = y
-        #b_info.rotation_order = swap_rot(rot_order, {"X": "Y", "Y": "X", "Z": "Z"})
     if mode == "Y":
         if sign == -1:
-            #z *= -1
             x *= -1
         a = x
         b = z
         c = y
-        #b_info.rotation_order = swap_rot(rot_order, {"X": "X", "Y": "Y", "Z": "Z"})
     if mode == "Z":
         if sign == -1:
             y *= -1
@@ -139,16 +109,16 @@ def apply_rotation(bl_obj, bone_name, x, y, z):
         a = x
         b = y
         c = z
-        #b_info.rotation_order = swap_rot(rot_order, {"X": "X", "Y": "Z", "Z": "Y"})
+    return a, b, c
 
-    if a is None or a == "":
-        a = bl_obj.pose.bones[bone_name].rotation_euler[0]
-    if b is None or b == "":
-        b = bl_obj.pose.bones[bone_name].rotation_euler[1]
-    if c is None or c == "":
-        c = bl_obj.pose.bones[bone_name].rotation_euler[2]
 
-    bl_obj.pose.bones[bone_name].rotation_euler = (radians(a), radians(b), radians(c))
+def find_edit_and_pose_bone(bl_armature, bone_name):
+    if bone_name not in bl_armature.data.edit_bones:
+        bone = find_bone_by_instance_id(bone_name, bl_armature.data.edit_bones)
+        if bone is None:
+            return None, None
+        bone_name = bone.name
+    return bl_armature.data.edit_bones[bone_name], bl_armature.pose.bones[bone_name]
 
 
 def find_bone_by_instance_id(instance_id, edit_bones):
