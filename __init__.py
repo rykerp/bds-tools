@@ -105,6 +105,7 @@ def register():
     bpy.types.EditBone.bdst_center_point = bpy.props.FloatVectorProperty(name="bone center point")
     bpy.types.EditBone.bdst_end_point = bpy.props.FloatVectorProperty(name="bone end point")
     bpy.types.EditBone.bdst_orientation = bpy.props.FloatVectorProperty(name="bone orientation")
+    bpy.types.EditBone.bdst_instance_id = bpy.props.StringProperty(name="bone node_instance id")
 
     bpy.utils.register_class(BdstAddonPreferences)
     asset_import.register()

@@ -167,18 +167,16 @@ def insert_bones(si_arm, armdat):
 
 
 def insert_bone (si_bone, armdat):
-    """insert the bone object into the armature data armdat and returns
-     a bone_info object created for this bone.
-     created bones are name 'def-<bodypart>.<axes>'
-     si_bone must provide these attributes:
-     orientation, origin - basic position data of the bone used to create
-       the transformation of the bone in armature-space.
+    """Create bone and insert into armature.
+    Uses:
+      node.id as as bone name (these are used in morph formulas)
+      node_instance.id as custom property bdst_instance_id (these are used in poses / scene.animations)
     """
 
-    #bname = "CTRL-%s" % (si_bone.id)
     bname = si_bone.node.id
     b_info = bone_info(bone=si_bone, bname=bname)
     b_bone = armdat.edit_bones.new(name=bname)
+    b_bone.bdst_instance_id = si_bone.id
     orient = si_bone.orientation
     b_bone.use_deform = True
 
