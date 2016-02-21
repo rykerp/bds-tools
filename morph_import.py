@@ -239,7 +239,7 @@ class BoneTransformation:
         self.bone_name = bone_name
         self.rotation = ["", "", ""]
         self.translation = [0, 0, 0]
-        self.scale = [0, 0, 0]
+        self.scale = ["", "", ""]
         self.center_point = [0, 0, 0]
         self.end_point = [0, 0, 0]
         self.orientation = [0, 0, 0]

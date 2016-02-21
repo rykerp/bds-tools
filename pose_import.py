@@ -38,11 +38,30 @@ class PoseImporter(bpy.types.Operator):
 
 
 def apply_scale(bl_obj, bone_name, x, y, z):
-    scale = bl_obj.pose.bones[bone_name].scale
-    a = scale[0] + x if x is not None else scale[0]
-    b = scale[2] + z if z is not None else scale[2]
-    c = scale[1] + y if y is not None else scale[1]
-    bl_obj.pose.bones[bone_name].scale = (a, b, c)
+    edit_bone, pose_bone = find_edit_and_pose_bone(bl_obj, bone_name)
+    if edit_bone is None or pose_bone is None:
+        log.error("bone not found %s" % bone_name)
+        return
+
+    a, b, c = transform_bone_orientation(edit_bone, x, y, z)
+
+    scale = pose_bone.scale
+    if a is None or a == "":
+        a = scale[0]
+    else:
+        a += 1
+
+    if b is None or b == "":
+        b = scale[1]
+    else:
+        b += 1
+
+    if c is None or c == "":
+        c = scale[2]
+    else:
+        c += 1
+
+    pose_bone.scale = (a, b, c)
 
 
 def apply_translation(bl_obj, bone_name, x, y, z):

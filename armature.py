@@ -179,6 +179,7 @@ def insert_bone (si_bone, armdat):
     b_bone.bdst_instance_id = si_bone.id
     orient = si_bone.orientation
     b_bone.use_deform = True
+    b_bone.use_inherit_scale = si_bone.inherits_scale
 
     center_point = si_bone.center_point
     end_point = si_bone.end_point
