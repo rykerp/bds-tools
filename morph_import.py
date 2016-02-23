@@ -348,7 +348,7 @@ class BlenderFormula(bpy.types.PropertyGroup):
 class BlenderMorph(bpy.types.PropertyGroup):
     formulas = bpy.props.CollectionProperty(type=BlenderFormula)
     visible = bpy.props.BoolProperty(name="visible")
-    value = bpy.props.FloatProperty(name="Value", min=0.0, max=1.0, subtype='FACTOR',
+    value = bpy.props.FloatProperty(name="Value", min=-5.0, max=5.0, subtype='FACTOR',
                                     get=get_morph_value, set=set_morph_value)
 
 
