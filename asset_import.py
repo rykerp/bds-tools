@@ -184,7 +184,7 @@ def load_asset(filepath):
             bl_obj.matrix_parent_inverse = bl_parent.matrix_world.inverted()
         if bl_parent is not None and bl_parent is bl_armature:
             bl_obj = find_bl_object_for_node_id(blender_objects, node.id)
-            set_bone_as_relative_parent(bl_obj, bl_armature, parent[1:])
+            set_bone_as_relative_parent(bl_obj, bl_armature, bones[parent[1:]])
 
     # do necessary transforms
     for node in geometry_nodes:
@@ -637,14 +637,14 @@ def transform_bones(bones, bl_armature):
     old_obj.select = True
 
 
-def set_bone_as_relative_parent(bl_obj, bl_armature, bone_name):
+def set_bone_as_relative_parent(bl_obj, bl_armature, bone_node):
     old_obj = bpy.context.active_object
     for item in bpy.context.selectable_objects:
         item.select = False
     bl_obj.select = True
     bl_armature.select = True
     bpy.context.scene.objects.active = bl_armature
-    bl_armature.data.bones.active = bl_armature.data.bones[bone_name]
+    bl_armature.data.bones.active = bl_armature.data.bones[bone_node.node.id]
     bpy.ops.object.parent_set(type='BONE_RELATIVE')
     for item in bpy.context.selectable_objects:
         item.select = False
